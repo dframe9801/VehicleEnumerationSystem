@@ -1,13 +1,36 @@
 <template>
   <div class="WebCam">
     <h1>Vehicle Enumeration System</h1>
+    <p>{{ msg }}</p>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'WebCam',
-  props: {
+  data() {
+    return {
+      msg: '',
+    };
+  },
+  methods: {
+    getMessage() {
+      const path = 'http://localhost:5000/WebcamData';
+      axios.get(path)
+        .then((res) => {
+          this.msg = res.data;
+          console.log(res);
+        })
+        .catch((error) => {
+          // esling-disable-next-line
+          console.error(error);
+        });
+    },
+  },
+  created() {
+    this.getMessage();
   },
 };
 </script>

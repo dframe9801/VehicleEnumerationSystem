@@ -18,7 +18,7 @@ mongodb_client = PyMongo(app, uri="mongodb://localhost:27017/VehicleEnumerationS
 db = mongodb_client.db
 
 # streaming 
-camera = cv2.VideoCapture("rtsp://192.168.1.178:554/VESTest")
+camera = cv2.VideoCapture("rtsp://192.168.1.178")
 
 
 def gen_frames():  
@@ -33,7 +33,7 @@ def gen_frames():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 
 # sanity check route
-@app.route('/ping', methods=['GET'])
+@app.route('/WebcamData', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
 
