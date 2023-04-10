@@ -1,7 +1,7 @@
 <template>
   <div class="WebCam">
     <h1>Vehicle Enumeration System</h1>
-    <p>{{ msg }}</p>
+    <img  v-if="frameSrc" :src="frameSrc" alt="Video feed" />
   </div>
 </template>
 
@@ -12,25 +12,27 @@ export default {
   name: 'WebCam',
   data() {
     return {
-      msg: '',
+      frameSrc: null,
     };
   },
-  methods: {
-    getMessage() {
-      const path = 'http://localhost:5000/WebcamData';
-      axios.get(path)
-        .then((res) => {
-          this.msg = res.data;
-          console.log(res);
-        })
-        .catch((error) => {
-          // esling-disable-next-line
-          console.error(error);
-        });
-    },
+  mounted() {
+    this.fetchFrames();
   },
-  created() {
-    this.getMessage();
+  methods: {
+    async fetchFrames() {
+      try {
+        const response = await axios.get('http://localhost:5000/video_feed');
+        if (response.data.success) {
+          this.frameSrc = `data:image/jpeg;base64,${response.data.frame}`;
+        } else {
+          console.error('Failed to fetch frame');
+        }
+      } catch (error) {
+        console.error('Error fetching frame:', error);
+      } finally {
+        setTimeout(() => this.fetchFrames(), 10);
+      }
+    },
   },
 };
 </script>
