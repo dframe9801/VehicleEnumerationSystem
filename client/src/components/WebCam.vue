@@ -1,7 +1,16 @@
 <template>
   <div class="WebCam">
-    <h1>Vehicle Enumeration System</h1>
-    <img  v-if="frameSrc" :src="frameSrc" alt="Video feed" />
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-2 bg-secondary">
+          Column
+        </div>
+        <div class="col">
+          Column
+        </div>
+      </div>
+    </div>
+   <!-- <img  v-if="frameSrc" :src="frameSrc" alt="Video feed" /> -->
   </div>
 </template>
 
@@ -38,18 +47,5 @@ export default {
 </script>
 
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+
 </style>
