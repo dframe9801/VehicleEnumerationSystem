@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_pymongo import PyMongo
 import cv2
 import base64
+from tracker import *
 
 # configuration
 DEBUG = True
@@ -18,10 +19,19 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 mongodb_client = PyMongo(app, uri="mongodb://localhost:27017/VehicleEnumerationSystem")
 db = mongodb_client.db
 
+# =========== Vehicle Detection =============
+# Create tracker object
+tracker = EuclideanDistTracker()
+
 # streaming 
 camera = cv2.VideoCapture("rtsp://192.168.1.178")
 camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
+# Object detection from Stable camera
+object_detector = cv2.createBackgroundSubtractorMOG2(
+    history=100, varThreshold=40)
+
 
 @app.route('/video_feed')
 def video_feed():
