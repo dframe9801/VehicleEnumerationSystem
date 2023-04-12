@@ -20,7 +20,8 @@ export default {
   name: 'NavBar',
 };
 </script>
-  <style scoped>
+
+<style scoped>
   .navbar-brand {
   padding-left: 1rem;
   padding-right: 1rem;
