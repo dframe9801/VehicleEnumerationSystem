@@ -4,6 +4,9 @@ from flask_pymongo import PyMongo
 import cv2
 import base64
 from tracker import *
+import time
+import schedule
+from datetime import datetime
 
 # configuration
 DEBUG = True
@@ -31,9 +34,15 @@ tracker = EuclideanDistTracker()
 # test video
 camera = cv2.VideoCapture("highway.mp4")
 
+# Counter
+counter_global = 0
+counter_tenmin = 0
+db_id=0
+
 # Object detection from Stable camera
 object_detector = cv2.createBackgroundSubtractorMOG2(
     history=100, varThreshold=40)
+
 
 
 @app.route('/video_feed')
@@ -47,7 +56,7 @@ def video_feed():
     height, width, _ = frame.shape
 
     # Extract Region of interest
-    roi = frame[340: 720, 500: 800]
+    roi = frame[500: 720, 500: 800]
 
     # 1. Object Detection
     mask = object_detector.apply(roi)
@@ -58,7 +67,7 @@ def video_feed():
     for cnt in contours:
         # Calculate area and remove small elements
         area = cv2.contourArea(cnt)
-        if area > 100:
+        if area > 120:
             # cv2.drawContours(roi, [cnt], -1, (0, 255, 0), 2)
             x, y, w, h = cv2.boundingRect(cnt)
 
@@ -71,7 +80,12 @@ def video_feed():
         cv2.putText(roi, str(id), (x, y - 15),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
         cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
-
+        global counter_global
+        counter_global = id + 1
+        
+    
+    
+    
     # cv2.imshow("roi", roi)
     # cv2.imshow("Frame", frame)
     # cv2.imshow("Mask", mask)
@@ -86,6 +100,30 @@ def video_feed():
     frame_base64 = base64.b64encode(buffer.tobytes(), altchars=None).decode('utf-8')
     return jsonify({'success': True, 'frame': frame_base64})
 
+
+
+@app.route("/add_one")
+def add_one():
+    def count_record():
+        global counter_tenmin
+        global db_id
+        db_id = 9
+        counter_tenmin = counter_global - counter_tenmin
+        current_date = datetime.now()
+        post = {"_id": db_id,"Vehicle Count":counter_global,"date":current_date.strftime("%m/%d/%Y, %H:%M")}
+        db_id =+1
+        return post
+    db.counts.insert_one(count_record())
+    return jsonify(message="success")
+
+@app .route("/get_count/<int:countId>")
+def get_count(countId):
+    ret_count = db.counts.find_one({"_id":countId})
+    return ret_count
+
+@app.route("/counter")
+def counter():
+    return jsonify(countG=counter_global)
 
 if __name__ == '__main__':
     app.run()
