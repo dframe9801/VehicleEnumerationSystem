@@ -11,16 +11,22 @@ from datetime import datetime
 # configuration
 DEBUG = True
 
-# instantiate the app
+# =========== Intantiate app ===============
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.config["MONGO_URI"] = "mongodb+srv://wals9256:kQTHJidEp4igvXlF@vehicleenumerationsyste.bb2lcf9.mongodb.net/EnumerationData?retryWrites=true&w=majority"
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-# database
-mongodb_client = PyMongo(app, uri="mongodb://localhost:27017/VehicleEnumerationSystem")
-db = mongodb_client.db
+# =========== Database =====================
+mongo = PyMongo(app)
+db = mongo.db
+
+collection_name = "Count"
+carCount = db[collection_name]
+test_doc = {"name": "Test Document", "value": 42}
+result = carCount.insert_one(test_doc)
 
 # =========== Vehicle Detection =============
 # Create tracker object
@@ -83,9 +89,6 @@ def video_feed():
         global counter_global
         counter_global = id + 1
         
-    
-    
-    
     # cv2.imshow("roi", roi)
     # cv2.imshow("Frame", frame)
     # cv2.imshow("Mask", mask)
@@ -113,12 +116,12 @@ def add_one():
         post = {"_id": db_id,"Vehicle Count":counter_global,"date":current_date.strftime("%m/%d/%Y, %H:%M")}
         db_id =+1
         return post
-    db.counts.insert_one(count_record())
+    db.carCount.insert_one(count_record())
     return jsonify(message="success")
 
 @app .route("/get_count/<int:countId>")
 def get_count(countId):
-    ret_count = db.counts.find_one({"_id":countId})
+    ret_count = db.carCount.find_one({"_id":countId})
     return ret_count
 
 @app.route("/counter")
