@@ -6,7 +6,7 @@
           <div class="counter-container">
             <p>Counter</p>
             <div class="counter-box">
-              <span class="counter">0</span>
+              <span class="counter">{{ counter }}</span>
             </div>
           </div>
         </div>
@@ -30,6 +30,7 @@
 // @ is an alias to /src
 import WebCam from '@/components/WebCam.vue';
 import CPMGraph from '@/components/CarsPerMinGraph.vue';
+import axios from 'axios';
 
 export default {
   name: 'HomeView',
@@ -38,6 +39,16 @@ export default {
     CPMGraph,
 
   },
+  data() {
+    return {
+      counter: null,
+    };
+  },
+  async created() {
+    const response = await axios.get('http://localhost:5000/counter');
+    this.counter = response.data.counterG;
+  },
+
 };
 </script>
 
