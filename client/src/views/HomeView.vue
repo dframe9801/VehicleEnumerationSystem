@@ -37,18 +37,27 @@ export default {
   components: {
     WebCam,
     CPMGraph,
-
   },
   data() {
     return {
-      counter: null,
+      counter: 0, // initialize counter to 0
     };
   },
-  async created() {
-    const response = await axios.get('http://localhost:5000/counter');
-    this.counter = response.data.counterG;
+  created() {
+    this.fetchCounter(); // call fetchCounter when the component is created
   },
-
+  methods: {
+    async fetchCounter() {
+      try {
+        const response = await axios.get('http://localhost:5000/counter');
+        this.counter = response.data.counter; // update counter with the value received from server
+      } catch (error) {
+        console.error('Error fetching counter:', error);
+      } finally {
+        setTimeout(() => this.fetchCounter(), 1000); // call fetchCounter again after 1 second
+      }
+    },
+  },
 };
 </script>
 

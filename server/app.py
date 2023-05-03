@@ -76,8 +76,10 @@ def video_feed():
         if area > 120:
             # cv2.drawContours(roi, [cnt], -1, (0, 255, 0), 2)
             x, y, w, h = cv2.boundingRect(cnt)
-
             detections.append([x, y, w, h])
+            global counter_global
+            counter_global = counter_global + 1
+
 
     # 2. Object Tracking
     boxes_ids = tracker.update(detections)
@@ -86,9 +88,7 @@ def video_feed():
         cv2.putText(roi, str(id), (x, y - 15),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
         cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
-        global counter_global
-        counter_global = id + 1
-        
+
     # cv2.imshow("roi", roi)
     # cv2.imshow("Frame", frame)
     # cv2.imshow("Mask", mask)
@@ -126,7 +126,7 @@ def get_count(countId):
 
 @app.route("/counter")
 def counter():
-    return jsonify(countG=counter_global)
+    return jsonify(counter=counter_global)
 
 if __name__ == '__main__':
     app.run()
