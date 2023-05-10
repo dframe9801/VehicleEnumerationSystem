@@ -115,7 +115,7 @@ def add_one():
         global db_id
         counter_tenmin = counter_global - counter_tenmin
         current_date = datetime.now()
-        post = {"_id":db_id,"Vehicle Count":counter_global,"date":current_date.strftime("%m/%d/%Y/%H:%M")}
+        post = {"_id":db_id,"Vehicle Count":counter_tenmin,"date":current_date.strftime("%m/%d/%Y/%H:%M")}
         db_id = db_id + 1
         return post
     db.carCount.insert_one(count_record())
