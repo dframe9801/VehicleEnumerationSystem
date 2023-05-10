@@ -45,6 +45,7 @@ export default {
   },
   created() {
     this.fetchCounter(); // call fetchCounter when the component is created
+    this.dbInsert();
   },
   methods: {
     async fetchCounter() {
@@ -57,6 +58,16 @@ export default {
         setTimeout(() => this.fetchCounter(), 1000); // call fetchCounter again after 1 second
       }
     },
+    async dbInsert() {
+      try {
+        const response = await axios.get('http://localhost:5000/add_one');
+      } catch (error) {
+        console.error('Error fetching counter:', error);
+      } finally {
+        setTimeout(() => this.fetchCounter(), 60000); // call fetchCounter again after 1 second
+      }
+    },
+
   },
 };
 </script>

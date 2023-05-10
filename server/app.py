@@ -77,8 +77,8 @@ def video_feed():
             # cv2.drawContours(roi, [cnt], -1, (0, 255, 0), 2)
             x, y, w, h = cv2.boundingRect(cnt)
             detections.append([x, y, w, h])
-            global counter_global
-            counter_global = counter_global + 1
+            
+            
 
 
     # 2. Object Tracking
@@ -88,6 +88,9 @@ def video_feed():
         cv2.putText(roi, str(id), (x, y - 15),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
         cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
+        global counter_global
+        counter_global = id+1
+        
 
     # cv2.imshow("roi", roi)
     # cv2.imshow("Frame", frame)
@@ -110,11 +113,10 @@ def add_one():
     def count_record():
         global counter_tenmin
         global db_id
-        db_id = 9
         counter_tenmin = counter_global - counter_tenmin
         current_date = datetime.now()
-        post = {"_id": db_id,"Vehicle Count":counter_global,"date":current_date.strftime("%m/%d/%Y, %H:%M")}
-        db_id =+1
+        post = {"_id":db_id,"Vehicle Count":counter_global,"date":current_date.strftime("%m/%d/%Y/%H:%M")}
+        db_id = db_id + 1
         return post
     db.carCount.insert_one(count_record())
     return jsonify(message="success")
